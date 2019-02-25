@@ -1,22 +1,63 @@
 import React from 'react'
 import { Row, Col } from 'antd'
 import logo from '../../image/newspaper.png'
-import { Menu, Icon } from 'antd';
+import { Link } from 'react-router-dom'
+import { Menu, Icon, Tabs, message, Form, Input, Button, Modal } from 'antd';
+import { Module } from 'module';
+import { from } from 'rxjs';
 
-export default class PCHeader extends React.Component {
+const TabPane = Tabs.TabPane;
+
+class PCHeader extends React.Component {
   constructor () {
     super()
     this.state = {
-      current: 'top'
+      current: 'top',
+      visible: false,
+      action: 'login',
+      logined: false,
+      userName: '',
+      userId: 0
     }
   }
   handleClick (e) {
-    console.log('click', e)
     this.setState({
       current: e.key
     })
+    if (e.key === 'register') {
+      this.setModalVisible(true)
+    }
+  }
+  setModalVisible (bool) {
+    this.setState({
+      visible: bool
+    })
+  }
+  handleSubmit () {
+    console.log('submit')
+  }
+  callback (key) {
+    this.setState({
+      action: key === '1' ? 'login' : 'register'
+    })
   }
   render () {
+    let { getFieldDecorator } = this.props.form
+    const userShow = this.state.logined
+    ?
+    <Menu.Item key="logout" className="register">
+      <Button type="primary" htmlType="button">{this.state.userName}</Button>
+      &nbsp;&nbsp;
+      <Link target="_blank">
+        <Button type="dashed" htmlType="button"></Button>
+      </Link>
+      &nbsp;&nbsp;
+        <Button type="ghost" htmlType="button">退出</Button>
+    </Menu.Item>
+    :
+    <Menu.Item key="register" className="register">
+      <Icon type="appstore"></Icon>注册/登录
+    </Menu.Item>
     return (
       <header>
          <Row>
@@ -40,7 +81,45 @@ export default class PCHeader extends React.Component {
                 <Menu.Item key="yule"><Icon type="mail"/>娱乐</Menu.Item>
                 <Menu.Item key="tiyu"><Icon type="mail"/>体育</Menu.Item>
                 <Menu.Item key="keji"><Icon type="mail"/>科技</Menu.Item>
+                {userShow}
               </Menu>
+              <Modal
+                title="用户中心"
+                visible={this.state.visible}
+                onOk={this.setModalVisible.bind(this, false)}
+                okText="关闭"
+                onCancel={this.setModalVisible.bind(this, false)}
+                warpClassName="vertical-center-modal">
+                <Tabs type="card" defaultActiveKey="1" onChange={this.callback.bind(this)}>
+                  <TabPane tab="登录" key="1">Content of Tab Pane 1</TabPane>
+                  <TabPane tab="注册" key="2">
+                    <Form onSubmit={this.handleSubmit.bind(this)}>
+                      <Form.Item label="用户">
+                        {getFieldDecorator('r_username', {
+                          rules: [{required: true, message: '账号不能为空'}]
+                        })(
+                          <Input placeholder="请输入您的账号" />
+                        )}
+                      </Form.Item>
+                      <Form.Item label="密码">
+                        {getFieldDecorator('r_password', {
+                          rules: [{required: true, message: '密码不能为空'}]
+                        })(
+                          <Input type="password" placeholder="请输入您的密码"/>
+                        )}
+                      </Form.Item>
+                      <Form.Item label="确认密码">
+                        {getFieldDecorator('r_confirmPasswqord', {
+                          rules: [{required: true, message: '请再次输入密码'}]
+                        })(
+                          <Input type="password" placeholder="请再次输入您的密码"/>
+                        )}
+                      </Form.Item>
+                      <Button type="primary" htmlType="submit">注册</Button>
+                    </Form>
+                  </TabPane>
+                </Tabs>
+              </Modal>
             </Col>
             <Col span={2}></Col>
          </Row>
@@ -48,3 +127,5 @@ export default class PCHeader extends React.Component {
     )
   }
 }
+
+export default PCHeader = Form.create({})(PCHeader)
