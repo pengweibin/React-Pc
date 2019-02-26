@@ -2,11 +2,11 @@ import React from 'react'
 import { Row, Col } from 'antd'
 import logo from '../../image/newspaper.png'
 import { Link } from 'react-router-dom'
-import { Menu, Icon, Tabs, message, Form, Input, Button, Modal } from 'antd';
-import { Module } from 'module';
-import { from } from 'rxjs';
+import { Menu, Icon, Tabs, message, Form, Input, Button, Modal } from 'antd'
+import { Module } from 'module'
+import { from } from 'rxjs'
 
-const TabPane = Tabs.TabPane;
+const TabPane = Tabs.TabPane
 
 class PCHeader extends React.Component {
   constructor () {
@@ -33,8 +33,27 @@ class PCHeader extends React.Component {
       visible: bool
     })
   }
-  handleSubmit () {
-    console.log('submit')
+  handleSubmit (e) {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        let fetchOption = {
+          method: 'GET'
+        }
+        console.log('Received values of form: ', values)
+        fetch(`http://newsapi.gugujiankong.com/Handler.ashx?action=register&username=${values.userName}&password=${values.password}&r_userName=${values.r_username}&r_password=${values.r_password}&r_confirmPassword=${values.r_confirmPassword}`, fetchOption)
+        .then(response => response.json())
+        .then(json => {
+          console.log('json', json)
+          this.setState({
+            userName: json.NickUserName,
+            userId: json.UserId
+          })
+        })
+        message.success('请求成功')
+        this.setModalVisible(false)
+      }
+    })
   }
   callback (key) {
     this.setState({
@@ -109,7 +128,7 @@ class PCHeader extends React.Component {
                         )}
                       </Form.Item>
                       <Form.Item label="确认密码">
-                        {getFieldDecorator('r_confirmPasswqord', {
+                        {getFieldDecorator('r_confirmPassword', {
                           rules: [{required: true, message: '请再次输入密码'}]
                         })(
                           <Input type="password" placeholder="请再次输入您的密码"/>
