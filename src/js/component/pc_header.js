@@ -4,7 +4,6 @@ import logo from '../../image/newspaper.png'
 import { Link } from 'react-router-dom'
 import { Menu, Icon, Tabs, message, Form, Input, Button, Modal } from 'antd'
 import { Module } from 'module'
-import { from } from 'rxjs'
 
 const TabPane = Tabs.TabPane
 
