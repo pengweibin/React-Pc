@@ -1,7 +1,7 @@
 import React from 'react'
 import { Row, Col } from 'antd'
 import logo from '../../image/newspaper.png'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { Menu, Icon, Tabs, message, Form, Input, Button, Modal } from 'antd'
 
 const TabPane = Tabs.TabPane
@@ -74,9 +74,9 @@ class PCHeader extends React.Component {
     <Menu.Item key="logout" className="register">
       <Button type="primary" htmlType="button">{this.state.userName}</Button>
       &nbsp;&nbsp;
-      {/* <Link to="/" target="_blank"> */}
+      <Link to="/" target="_blank">
         <Button type="dashed" htmlType="button">个人中心</Button>
-      {/* </Link> */}
+      </Link>
       &nbsp;&nbsp;
         <Button type="ghost" htmlType="button">退出</Button>
     </Menu.Item>
