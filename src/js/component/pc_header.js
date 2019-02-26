@@ -3,7 +3,6 @@ import { Row, Col } from 'antd'
 import logo from '../../image/newspaper.png'
 import { Link } from 'react-router-dom'
 import { Menu, Icon, Tabs, message, Form, Input, Button, Modal } from 'antd'
-import { Module } from 'module'
 
 const TabPane = Tabs.TabPane
 
@@ -20,11 +19,15 @@ class PCHeader extends React.Component {
     }
   }
   handleClick (e) {
-    this.setState({
-      current: e.key
-    })
+    if (e.key === 'logout') {
+      return
+    }
     if (e.key === 'register') {
       this.setModalVisible(true)
+    } else {
+      this.setState({
+        current: e.key
+      })
     }
   }
   setModalVisible (bool) {
@@ -40,7 +43,7 @@ class PCHeader extends React.Component {
           method: 'GET'
         }
         console.log('Received values of form: ', values)
-        fetch(`http://newsapi.gugujiankong.com/Handler.ashx?action=register&username=${values.userName}&password=${values.password}&r_userName=${values.r_username}&r_password=${values.r_password}&r_confirmPassword=${values.r_confirmPassword}`, fetchOption)
+        fetch(`http://newsapi.gugujiankong.com/Handler.ashx?action=${this.state.action}&username=${values.userName}&password=${values.password}&r_userName=${values.r_username}&r_password=${values.r_password}&r_confirmPassword=${values.r_confirmPassword}`, fetchOption)
         .then(response => response.json())
         .then(json => {
           console.log('json', json)
@@ -49,6 +52,11 @@ class PCHeader extends React.Component {
             userId: json.UserId
           })
         })
+        if (this.state.action === 'login') {
+          this.setState({
+            logined: true
+          })
+        }
         message.success('请求成功')
         this.setModalVisible(false)
       }
@@ -66,9 +74,9 @@ class PCHeader extends React.Component {
     <Menu.Item key="logout" className="register">
       <Button type="primary" htmlType="button">{this.state.userName}</Button>
       &nbsp;&nbsp;
-      <Link target="_blank">
-        <Button type="dashed" htmlType="button"></Button>
-      </Link>
+      {/* <Link to="/" target="_blank"> */}
+        <Button type="dashed" htmlType="button">个人中心</Button>
+      {/* </Link> */}
       &nbsp;&nbsp;
         <Button type="ghost" htmlType="button">退出</Button>
     </Menu.Item>
@@ -109,26 +117,44 @@ class PCHeader extends React.Component {
                 onCancel={this.setModalVisible.bind(this, false)}
                 warpClassName="vertical-center-modal">
                 <Tabs type="card" defaultActiveKey="1" onChange={this.callback.bind(this)}>
-                  <TabPane tab="登录" key="1">Content of Tab Pane 1</TabPane>
+                  <TabPane tab="登录" key="1">
+                    <Form onSubmit={this.handleSubmit.bind(this)}>
+                      <Form.Item label="用户">
+                        {getFieldDecorator('userName', {
+                          rules: [{required: this.state.action === 'login', message: '账号不能为空'}]
+                        })(
+                          <Input placeholder="请输入您的账号" />
+                        )}
+                      </Form.Item>
+                      <Form.Item label="密码">
+                        {getFieldDecorator('password', {
+                          rules: [{required: this.state.action === 'login', message: '密码不能为空'}]
+                        })(
+                          <Input type="password" placeholder="请输入您的密码"/>
+                        )}
+                      </Form.Item>
+                      <Button type="primary" htmlType="submit">登录</Button>
+                    </Form>
+                  </TabPane>
                   <TabPane tab="注册" key="2">
                     <Form onSubmit={this.handleSubmit.bind(this)}>
                       <Form.Item label="用户">
                         {getFieldDecorator('r_username', {
-                          rules: [{required: true, message: '账号不能为空'}]
+                          rules: [{required: this.state.action === 'register', message: '账号不能为空'}]
                         })(
                           <Input placeholder="请输入您的账号" />
                         )}
                       </Form.Item>
                       <Form.Item label="密码">
                         {getFieldDecorator('r_password', {
-                          rules: [{required: true, message: '密码不能为空'}]
+                          rules: [{required: this.state.action === 'register', message: '密码不能为空'}]
                         })(
                           <Input type="password" placeholder="请输入您的密码"/>
                         )}
                       </Form.Item>
                       <Form.Item label="确认密码">
                         {getFieldDecorator('r_confirmPassword', {
-                          rules: [{required: true, message: '请再次输入密码'}]
+                          rules: [{required: this.state.action === 'register', message: '请再次输入密码'}]
                         })(
                           <Input type="password" placeholder="请再次输入您的密码"/>
                         )}

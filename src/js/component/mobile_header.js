@@ -1,7 +1,7 @@
 import React from 'react'
 import logo from '../../image/newspaper.png'
 import { Link } from 'react-router-dom'
-import { Row, Col, Menu, Icon, Tabs, message, Form, Input, Button, Modal } from 'antd'
+import { Icon, Tabs, message, Form, Input, Button, Modal } from 'antd'
 
 const TabPane = Tabs.TabPane
 
