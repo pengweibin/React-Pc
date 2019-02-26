@@ -18,6 +18,15 @@ class PCHeader extends React.Component {
       userId: 0
     }
   }
+  componentWillMount () {
+    this.setState({
+      logined: localStorage.userid
+    })
+    this.setState({
+      userId: localStorage.userid,
+      userName: localStorage.nickname || ''
+    })
+  }
   handleClick (e) {
     if (e.key === 'logout') {
       return
@@ -51,6 +60,8 @@ class PCHeader extends React.Component {
             userName: json.NickUserName,
             userId: json.UserId
           })
+          localStorage.userid = json.UserId
+          localStorage.nickname = json.NickUserName
         })
         if (this.state.action === 'login') {
           this.setState({
@@ -67,6 +78,14 @@ class PCHeader extends React.Component {
       action: key === '1' ? 'login' : 'register'
     })
   }
+  logout () {
+    message.success('退出成功')
+    localStorage.userid = ''
+    localStorage.nickname = ''
+    this.setState({
+      logined: false
+    })
+  }
   render () {
     let { getFieldDecorator } = this.props.form
     const userShow = this.state.logined
@@ -78,7 +97,7 @@ class PCHeader extends React.Component {
         <Button type="dashed" htmlType="button">个人中心</Button>
       </Link>
       &nbsp;&nbsp;
-        <Button type="ghost" htmlType="button">退出</Button>
+        <Button type="ghost" htmlType="button" onClick={this.logout.bind(this)}>退出</Button>
     </Menu.Item>
     :
     <Menu.Item key="register" className="register">

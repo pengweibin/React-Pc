@@ -16,7 +16,7 @@ html {
   height: 30px;
 }
 
-#mobile header span {
+#mobile header .mobile-logo {
   font-size: 25px;
   vertical-align: middle;
   padding-left: 5px;

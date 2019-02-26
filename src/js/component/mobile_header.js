@@ -17,6 +17,15 @@ class MobileHeader extends React.Component {
       userId: 0
     }
   }
+  componentWillMount () {
+    this.setState({
+      logined: localStorage.userid
+    })
+    this.setState({
+      userId: localStorage.userid,
+      userName: localStorage.nickname || ''
+    })
+  }
   setModalVisible (bool) {
     this.setState({
       visible: bool
@@ -42,6 +51,8 @@ class MobileHeader extends React.Component {
             userName: json.NickUserName,
             userId: json.UserId
           })
+          localStorage.userid = json.UserId
+          localStorage.nickname = json.NickUserName
         })
         if (this.state.action === 'login') {
           this.setState({
@@ -53,11 +64,20 @@ class MobileHeader extends React.Component {
       }
     })
   }
+  logout () {
+    message.success('退出成功')
+    localStorage.userid = ''
+    localStorage.nickname = ''
+    this.setState({
+      logined: false
+    })
+  }
   render () {
     let { getFieldDecorator } = this.props.form
     const userShow = this.state.logined
     ?
     <Link>
+      <Button style={{float: 'right'}} type="primary" htmlType="button" onClick={this.logout.bind(this)}>退出</Button>
       <Icon type="inbox"></Icon>
     </Link>
     :
@@ -66,7 +86,7 @@ class MobileHeader extends React.Component {
       <div id="mobile" className="mobile-header">
         <header>
           <img src={logo} alt="logo"/>
-          <span>ReactNews</span>
+          <span className="mobile-logo">ReactNews</span>
           {userShow}
         </header>
         <Modal
